@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.7.43] - 2026-06-04
+
+### Added
+
+- Add window edge margin detection for gesture conflict prevention
+- Add verbose output and diagnostic step for Arch CI debugging
+- Add verbose output for install step diagnosis
+- Add cmake install diagnostics to identify install failure cause
+- Add failure log printing step for debugging
+- Add libice cairo to Arch deps, add build log capture for Deepin
+
+### Changed
+
+- Chore: New release 6.7.33
+- Chore: New release 6.7.34
+- Chore: New release 6.7.35
+- Chore: New release 6.7.36
+- Chore: New release 6.7.37
+- Chore: New release 6.7.38
+- Chore: New release 6.7.39
+- Chore: New release 6.7.40
+- Chore: New release 6.7.41
+- New release 6.7.42 (#335)
+- Replace private access hacks with accessor pattern
+- Replace zip with tar for artifact packaging
+- Use pipefail to expose cmake configure/build errors
+- Print build log on failure in Deepin CI
+
+### Fixed
+
+- Set default cursor when cursor is null
+- Adapt vtable hook for Qt6 inheritance changes
+- Fix kwayland package name for Arch Linux (use kwayland5 for KF5/Qt5)
+- Fix cmake install pipe issue and add install dir diagnostics
+- Guard Qt5-only QXcbCursor::m_gtkCursorThemeInitialized accessor for Qt6
+- Guard Qt5-only QXcbClipboard::m_owner accessor declaration
+
 ## [6.7.42] - 2026-05-20
 
 ### Added
