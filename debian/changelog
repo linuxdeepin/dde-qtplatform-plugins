@@ -1,3 +1,23 @@
+dde-qt5platform-plugins (6.7.43) unstable; urgency=medium
+
+  * fix: guard Qt5-only QXcbClipboard::m_owner accessor declaration
+  * fix: guard Qt5-only QXcbCursor::m_gtkCursorThemeInitialized accessor
+    for Qt6
+  * ci: print build log on failure in Deepin CI
+  * ci: add libice cairo to Arch deps, add build log capture for Deepin
+  * ci: add failure log printing step for debugging
+  * ci: use pipefail to expose cmake configure/build errors
+  * ci: add cmake install diagnostics to identify install failure cause
+  * ci: fix cmake install pipe issue and add install dir diagnostics
+  * ci: replace zip with tar for artifact packaging
+  * ci: add verbose output for install step diagnosis
+  * ci: add verbose output and diagnostic step for Arch CI debugging
+  * ci: fix kwayland package name for Arch Linux (use kwayland5 for
+    KF5/Qt5)
+  * refactor: replace private access hacks with accessor pattern
+
+ -- zhangkun <zhangkun2@uniontech.com>  Thu, 04 Jun 2026 19:44:25 +0800
+
 dde-qt5platform-plugins (6.7.42) unstable; urgency=medium
 
   * Release 6.7.42
