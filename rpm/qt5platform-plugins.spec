@@ -4,7 +4,7 @@
 %endif
 
 Name:           dde-qt5platform-plugins
-Version:        6.7.46
+Version:        6.7.47
 Release:        1%{?dist}
 Summary:        Qt platform plugins for DDE
 License:        GPLv3
