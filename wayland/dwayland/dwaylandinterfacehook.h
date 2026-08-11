@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 - 2022 Uniontech Software Technology Co.,Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 Uniontech Software Technology Co.,Ltd.
 //
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
@@ -55,6 +55,9 @@ public:
     static void splitWindowOnScreenByType(WId wid, quint32 position, quint32 type);
     static bool supportForSplittingWindow(WId wid);
     static bool supportForSplittingWindowByType(quint32 wid, quint32 screenSplittingType);
+    static void showSplitMenu(WId wid, const QRect &buttonRect);
+    static void hideSplitMenu(bool delay);
+    static bool isSplitMenuSupported();
 };
 
 DPP_END_NAMESPACE

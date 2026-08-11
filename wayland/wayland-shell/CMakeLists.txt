@@ -36,6 +36,24 @@ else()
     message(WARNING "QtWayland version incompatible")
 endif()
 
+# Generate the wayland client C protocol header for com_deepin_client_management.
+# The DWayland client library binds the global but does not expose the
+# show_split_menu/hide_split_menu requests, so the generated C header is used to
+# marshal those requests. wayland-scanner is a standard wayland build tool.
+find_program(WAYLAND_SCANNER NAMES wayland-scanner)
+if(WAYLAND_SCANNER)
+    set(CLIENT_MANAGEMENT_XML ${CMAKE_CURRENT_LIST_DIR}/protocols/com-deepin-client-management.xml)
+    set(CLIENT_MANAGEMENT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/wayland-client-com-deepin-client-management.h)
+    add_custom_command(
+        OUTPUT ${CLIENT_MANAGEMENT_HEADER}
+        COMMAND ${WAYLAND_SCANNER} client-header ${CLIENT_MANAGEMENT_XML} ${CLIENT_MANAGEMENT_HEADER}
+        DEPENDS ${CLIENT_MANAGEMENT_XML}
+        VERBATIM
+    )
+else()
+    message(WARNING "wayland-scanner not found; split screen menu (Wayland) will be unavailable")
+endif()
+
 add_library(${PROJECT_NAME} MODULE main.cpp ${GLOBAL_SOURCES} ${GLOBAL_HEADERS})
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins/wayland-shell-integration
@@ -66,6 +84,11 @@ if(${QT_VERSION_MAJOR} STREQUAL "5")
 endif()
 
 target_link_libraries(${PROJECT_NAME} ${COMMON_LIBS})
+
+if(WAYLAND_SCANNER AND DWayland_FOUND)
+    target_sources(${PROJECT_NAME} PRIVATE ${CLIENT_MANAGEMENT_HEADER})
+    target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+endif()
 
 if(NOT INSTALL_PATH)
     set(INSTALL_PATH ${CMAKE_INSTALL_LIBDIR}/qt${QT_VERSION_MAJOR}/plugins/wayland-shell-integration)

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 - 2022 Uniontech Software Technology Co.,Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 Uniontech Software Technology Co.,Ltd.
 //
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
@@ -504,6 +504,73 @@ bool Utility::supportForSplittingWindowByType(quint32 WId, quint32 screenSplitti
         return *(reinterpret_cast<const quint8 *>(cdata)) >= screenSplittingType;
 
     return false;
+}
+
+static const char _WM_TOGGLE_SPLIT_MENU[] = "_WM_TOGGLE_SPLIT_MENU";
+
+// kwin dispatches the _WM_TOGGLE_SPLIT_MENU ClientMessage to the X11Window whose
+// winId matches the message's window field, so hideSplitMenu must reuse the window
+// that previously requested showing. Tracked here because the platform function
+// signature carries no window id.
+static quint32 s_lastSplitMenuWid = 0;
+
+void Utility::showSplitMenu(quint32 WId, const QRect &buttonRect)
+{
+    s_lastSplitMenuWid = WId;
+
+    xcb_client_message_event_t xev;
+
+    xev.response_type = XCB_CLIENT_MESSAGE;
+    xev.type = internAtom(_WM_TOGGLE_SPLIT_MENU, false);
+    xev.window = WId;
+    xev.format = 32;
+    xev.data.data32[0] = 1; /* 1: show */
+    xev.data.data32[1] = buttonRect.x();
+    xev.data.data32[2] = buttonRect.y();
+    xev.data.data32[3] = buttonRect.width();
+    xev.data.data32[4] = buttonRect.height();
+
+    xcb_send_event(QX11Info::connection(), false, QX11Info::appRootWindow(QX11Info::appScreen()),
+                   SubstructureNotifyMask, (const char *)&xev);
+    xcb_flush(QX11Info::connection());
+}
+
+void Utility::hideSplitMenu(bool delay)
+{
+    // Reuse the window that last requested the split menu; kwin only processes the
+    // message when dispatched to that window.
+    quint32 WId = s_lastSplitMenuWid;
+    if (!WId)
+        return;
+
+    xcb_client_message_event_t xev;
+
+    xev.response_type = XCB_CLIENT_MESSAGE;
+    xev.type = internAtom(_WM_TOGGLE_SPLIT_MENU, false);
+    xev.window = WId;
+    xev.format = 32;
+    xev.data.data32[0] = 0; /* 0: hide */
+    xev.data.data32[1] = delay ? 1 : 0;
+    xev.data.data32[2] = 0;
+    xev.data.data32[3] = 0;
+    xev.data.data32[4] = 0;
+
+    xcb_send_event(QX11Info::connection(), false, QX11Info::appRootWindow(QX11Info::appScreen()),
+                   SubstructureNotifyMask, (const char *)&xev);
+    xcb_flush(QX11Info::connection());
+}
+
+bool Utility::isSplitMenuSupported()
+{
+    if (!DXcbWMSupport::instance()->isKwin())
+        return false;
+
+    // kwin registers the _WM_TOGGLE_SPLIT_MENU atom at startup when the split menu
+    // feature is built in, but it is not advertised through _NET_SUPPORTED. Probe for
+    // the atom's existence (without creating it) so that older kwin builds without the
+    // feature are correctly reported as unsupported, preserving the self-drawn fallback.
+    xcb_atom_t atom = internAtom(_WM_TOGGLE_SPLIT_MENU, true);
+    return atom != XCB_NONE;
 }
 
 bool Utility::setEnableBlurWindow(const quint32 WId, bool enable)

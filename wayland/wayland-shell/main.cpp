@@ -117,6 +117,15 @@ QWaylandShellIntegration *QKWaylandShellIntegrationPlugin::create(const QString 
         DWaylandShellManager::createPlasmaWindowManagement(registry, name, version);
     });
 
+#ifdef D_DEEPIN_IS_DWAYLAND
+    // Bind the deepin kwin client management global (com_deepin_client_management)
+    // used to show/hide the split screen menu on the compositor side. This protocol
+    // is only provided by the deepin DWayland client library; the split screen menu
+    // is unsupported when building against upstream KF5Wayland.
+    connect(registry, &Registry::clientManagementAnnounced,
+            &DWaylandShellManager::createClientManagement);
+#endif
+
     wl_display *wlDisplay = reinterpret_cast<wl_display*>(platformNativeDisplay);
 
     registry->create(wlDisplay);

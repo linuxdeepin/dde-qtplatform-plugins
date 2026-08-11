@@ -7,6 +7,11 @@
 #include "global.h"
 #include "../xcb/utility.h"
 
+#ifdef D_DEEPIN_IS_DWAYLAND
+#include <DWayland/Client/clientmanagement.h>
+#include "wayland-client-com-deepin-client-management.h"
+#endif
+
 #include <qwindow.h>
 
 #include <QtWaylandClientVersion>
@@ -47,6 +52,9 @@ namespace {
     Surface *kwayland_surface = nullptr;
     Compositor *kwayland_compositor = nullptr;
     PlasmaWindowManagement *kwayland_manage = nullptr;
+#ifdef D_DEEPIN_IS_DWAYLAND
+    ClientManagement *kwayland_client_management = nullptr;
+#endif
 };
 
 QList<QPointer<QWaylandWindow>> DWaylandShellManager::send_property_window_list;
@@ -173,6 +181,25 @@ void DWaylandShellManager::sendProperty(QWaylandShellSurface *self, const QStrin
     QWaylandWindow *wlWindow = self->window();
     if (Q_UNLIKELY(!wlWindow)) {
         qCWarning(dwlp) << "Error, wlWindow is nullptr";
+        return;
+    }
+
+    // The split menu requests talk to the com_deepin_client_management global directly
+    // and do not depend on the plasma/ddeshell surfaces, so handle them early.
+    if (!name.compare(showSplitMenu)) {
+        const auto tmp = value.toList();
+        if (tmp.size() >= 4) {
+            const QRect rect(tmp[0].toInt(), tmp[1].toInt(), tmp[2].toInt(), tmp[3].toInt());
+            showSplitMenu(wlWindow, rect);
+        } else {
+            qCWarning(dwlp) << "invalid showSplitMenu property: " << name << value;
+        }
+        wlWindow->window()->setProperty(showSplitMenu, QVariant());
+        return;
+    }
+    if (!name.compare(hideSplitMenu)) {
+        hideSplitMenu(value.toBool());
+        wlWindow->window()->setProperty(hideSplitMenu, QVariant());
         return;
     }
 
@@ -562,6 +589,59 @@ void DWaylandShellManager::createSurface()
 void DWaylandShellManager::createPlasmaWindowManagement(KWayland::Client::Registry *registry, quint32 name, quint32 version)
 {
     kwayland_manage = registry->createPlasmaWindowManagement(name, version, registry->parent());
+}
+
+void DWaylandShellManager::createClientManagement(quint32 name, quint32 version)
+{
+#ifdef D_DEEPIN_IS_DWAYLAND
+    kwayland_client_management = registry()->createClientManagement(name, version, registry()->parent());
+    // Publish the capability so the dwayland platform hook can report it through the
+    // process-wide property bridge (the two plugins are separate shared libraries).
+    qApp->setProperty(splitMenuSupportedState, kwayland_client_management && kwayland_client_management->isValid());
+#else
+    Q_UNUSED(name)
+    Q_UNUSED(version)
+#endif
+}
+
+bool DWaylandShellManager::isSplitMenuSupported()
+{
+#ifdef D_DEEPIN_IS_DWAYLAND
+    return kwayland_client_management && kwayland_client_management->isValid();
+#else
+    return false;
+#endif
+}
+
+void DWaylandShellManager::showSplitMenu(QWaylandWindow *wlWindow, const QRect &buttonRect)
+{
+#ifdef D_DEEPIN_IS_DWAYLAND
+    if (!kwayland_client_management || !kwayland_client_management->isValid() || !wlWindow)
+        return;
+
+    // On Wayland the window id is the surface id used by kwin to locate the window.
+    quint32 wid = 0;
+    if (wl_surface *surface = getWindowWLSurface(wlWindow))
+        wid = wl_proxy_get_id(reinterpret_cast<wl_proxy *>(surface));
+
+    com_deepin_client_management *proxy = *kwayland_client_management;
+    com_deepin_client_management_show_split_menu(proxy, buttonRect.x(), buttonRect.y(),
+                                                  buttonRect.width(), buttonRect.height(), wid);
+#else
+    Q_UNUSED(wlWindow)
+    Q_UNUSED(buttonRect)
+#endif
+}
+
+void DWaylandShellManager::hideSplitMenu(bool delay)
+{
+#ifdef D_DEEPIN_IS_DWAYLAND
+    if (!kwayland_client_management || !kwayland_client_management->isValid())
+        return;
+
+    com_deepin_client_management *proxy = *kwayland_client_management;
+    com_deepin_client_management_hide_split_menu(proxy, delay ? 1 : 0);
+#endif
 }
 
 void DWaylandShellManager::requestActivateWindow(QPlatformWindow *self)

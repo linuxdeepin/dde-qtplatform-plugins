@@ -7,6 +7,8 @@
 
 #include "vtablehook.h"
 
+namespace QtWaylandClient {
+
 #include "QtWaylandClient/private/qwaylandintegration_p.h"
 #include "QtWaylandClient/private/qwaylandshellintegrationplugin_p.h"
 #include "QtWaylandClient/private/qwaylandshellintegration_p.h"
@@ -92,6 +94,10 @@ public:
     static void createCompositor(quint32 name, quint32 version);
     static void createSurface();
     static void createPlasmaWindowManagement(KWayland::Client::Registry *registry, quint32 name, quint32 version);
+    static void createClientManagement(quint32 name, quint32 version);
+    static bool isSplitMenuSupported();
+    static void showSplitMenu(QWaylandWindow *wlWindow, const QRect &buttonRect);
+    static void hideSplitMenu(bool delay);
     static void handleGeometryChange(QWaylandShellSurface *shellSurface);
     static void handleWindowStateChanged(QWaylandShellSurface *shellSurface);
     static void setWindowStaysOnTop(QWaylandShellSurface *surface, const bool state);

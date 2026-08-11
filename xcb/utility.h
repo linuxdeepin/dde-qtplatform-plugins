@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 - 2022 Uniontech Software Technology Co.,Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 Uniontech Software Technology Co.,Ltd.
 //
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
@@ -75,6 +75,11 @@ public:
     static void splitWindowOnScreenByType(quint32 WId, quint32 position, quint32 type);
     static bool supportForSplittingWindow(quint32 WId);
     static bool supportForSplittingWindowByType(quint32 WId, quint32 screenSplittingType);
+
+    // Split screen menu provided by kwin (X11 atom _WM_TOGGLE_SPLIT_MENU)
+    static void showSplitMenu(quint32 WId, const QRect &buttonRect);
+    static void hideSplitMenu(bool delay);
+    static bool isSplitMenuSupported();
 
     struct BlurArea {
         qint32 x;

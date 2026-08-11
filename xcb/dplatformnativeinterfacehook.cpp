@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2017 - 2022 Uniontech Software Technology Co.,Ltd.
+// SPDX-FileCopyrightText: 2017 - 2026 Uniontech Software Technology Co.,Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -79,7 +79,10 @@ static QFunctionPointer getFunction(const QByteArray &function)
         {supportForSplittingWindow, reinterpret_cast<QFunctionPointer>(&Utility::supportForSplittingWindow)},
         {sendEndStartupNotifition, reinterpret_cast<QFunctionPointer>(&DPlatformIntegration::sendEndStartupNotifition)},
         {splitWindowOnScreenByType, reinterpret_cast<QFunctionPointer>(&Utility::splitWindowOnScreenByType)},
-        {supportForSplittingWindowByType, reinterpret_cast<QFunctionPointer>(&Utility::supportForSplittingWindowByType)}
+        {supportForSplittingWindowByType, reinterpret_cast<QFunctionPointer>(&Utility::supportForSplittingWindowByType)},
+        {showSplitMenu, reinterpret_cast<QFunctionPointer>(&Utility::showSplitMenu)},
+        {hideSplitMenu, reinterpret_cast<QFunctionPointer>(&Utility::hideSplitMenu)},
+        {isSplitMenuSupported, reinterpret_cast<QFunctionPointer>(&Utility::isSplitMenuSupported)}
     };
 
     return functionCache.value(function);

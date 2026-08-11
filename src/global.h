@@ -107,6 +107,14 @@ DEFINE_CONST_CHAR(supportForSplittingWindow);
 DEFINE_CONST_CHAR(sendEndStartupNotifition);
 DEFINE_CONST_CHAR(splitWindowOnScreenByType);
 DEFINE_CONST_CHAR(supportForSplittingWindowByType);
+DEFINE_CONST_CHAR(showSplitMenu);
+DEFINE_CONST_CHAR(hideSplitMenu);
+DEFINE_CONST_CHAR(isSplitMenuSupported);
+
+// process-wide QCoreApplication property shared between the dwayland platform hook
+// and the wayland-shell integration plugin to report whether the
+// com_deepin_client_management split menu global is bound.
+DEFINE_CONST_CHAR(splitMenuSupportedState);
 
 // others
 DEFINE_CONST_CHAR(WmWindowTypes);

@@ -15,6 +15,8 @@
 
 #include <QDebug>
 #include <QLoggingCategory>
+#include <QPointer>
+#include <QRect>
 
 #ifndef QT_DEBUG
 Q_LOGGING_CATEGORY(dwli, "dtk.wayland.interface" , QtInfoMsg);
@@ -46,7 +48,10 @@ static QFunctionPointer getFunction(const QByteArray &function)
         {splitWindowOnScreen, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::splitWindowOnScreen)},
         {supportForSplittingWindow, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::supportForSplittingWindow)},
         {splitWindowOnScreenByType, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::splitWindowOnScreenByType)},
-        {supportForSplittingWindowByType, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::supportForSplittingWindowByType)}
+        {supportForSplittingWindowByType, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::supportForSplittingWindowByType)},
+        {showSplitMenu, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::showSplitMenu)},
+        {hideSplitMenu, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::hideSplitMenu)},
+        {isSplitMenuSupported, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::isSplitMenuSupported)}
     };
     return functionCache.value(function);
 }
@@ -247,6 +252,42 @@ bool DWaylandInterfaceHook::supportForSplittingWindowByType(quint32 wid, quint32
     DNoTitlebarWlWindowHelper::setWindowProperty(window, ::supportForSplittingWindow, false);
     int propertyValue = window->property(::supportForSplittingWindow).toInt();
     return propertyValue >= 0 && static_cast<quint32>(propertyValue) >= screenSplittingType;
+}
+
+// The split menu request is bridged to the wayland-shell integration plugin through the
+// wayland window property mechanism: setting the property and pushing it via
+// QWaylandWindow::sendProperty triggers DWaylandShellManager::sendProperty, which in turn
+// talks to the com_deepin_client_management protocol.
+static QPointer<QWindow> g_lastSplitMenuWindow;
+
+void DWaylandInterfaceHook::showSplitMenu(WId wid, const QRect &buttonRect)
+{
+    QWindow *window = fromQtWinId(wid);
+    if (!window || !window->handle())
+        return;
+
+    g_lastSplitMenuWindow = window;
+    const QVariantList value{buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height()};
+    DNoTitlebarWlWindowHelper::setWindowProperty(window, ::showSplitMenu, QVariant(value));
+}
+
+void DWaylandInterfaceHook::hideSplitMenu(bool delay)
+{
+    // hide_split_menu is a global request, but the property bridge needs a wayland
+    // window to deliver the request; reuse the window that last requested showing.
+    QWindow *window = g_lastSplitMenuWindow;
+    if (!window || !window->handle())
+        return;
+
+    DNoTitlebarWlWindowHelper::setWindowProperty(window, ::hideSplitMenu, QVariant(delay));
+}
+
+bool DWaylandInterfaceHook::isSplitMenuSupported()
+{
+    // The capability is owned by the wayland-shell integration plugin (a separate
+    // shared library) which publishes it through a process-wide QCoreApplication
+    // property after binding the com_deepin_client_management global.
+    return qApp->property(splitMenuSupportedState).toBool();
 }
 
 DPP_END_NAMESPACE
