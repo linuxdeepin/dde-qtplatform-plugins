@@ -79,7 +79,10 @@ static QFunctionPointer getFunction(const QByteArray &function)
         {supportForSplittingWindow, reinterpret_cast<QFunctionPointer>(&Utility::supportForSplittingWindow)},
         {sendEndStartupNotifition, reinterpret_cast<QFunctionPointer>(&DPlatformIntegration::sendEndStartupNotifition)},
         {splitWindowOnScreenByType, reinterpret_cast<QFunctionPointer>(&Utility::splitWindowOnScreenByType)},
-        {supportForSplittingWindowByType, reinterpret_cast<QFunctionPointer>(&Utility::supportForSplittingWindowByType)}
+        {supportForSplittingWindowByType, reinterpret_cast<QFunctionPointer>(&Utility::supportForSplittingWindowByType)},
+        {supportSplitMenu, reinterpret_cast<QFunctionPointer>(&Utility::supportSplitMenu)},
+        {showSplitMenu, reinterpret_cast<QFunctionPointer>(&Utility::showSplitMenu)},
+        {hideSplitMenu, reinterpret_cast<QFunctionPointer>(&Utility::hideSplitMenu)}
     };
 
     return functionCache.value(function);

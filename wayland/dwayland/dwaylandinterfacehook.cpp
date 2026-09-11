@@ -8,6 +8,7 @@
 #include "dhighdpi.h"
 #include "dxsettings.h"
 #include "dnotitlebarwindowhelper_wl.h"
+#include "dclientmanagement.h"
 
 #include <qpa/qplatformnativeinterface.h>
 #include <private/qguiapplication_p.h>
@@ -46,7 +47,10 @@ static QFunctionPointer getFunction(const QByteArray &function)
         {splitWindowOnScreen, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::splitWindowOnScreen)},
         {supportForSplittingWindow, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::supportForSplittingWindow)},
         {splitWindowOnScreenByType, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::splitWindowOnScreenByType)},
-        {supportForSplittingWindowByType, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::supportForSplittingWindowByType)}
+        {supportForSplittingWindowByType, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::supportForSplittingWindowByType)},
+        {supportSplitMenu, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::supportSplitMenu)},
+        {showSplitMenu, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::showSplitMenu)},
+        {hideSplitMenu, reinterpret_cast<QFunctionPointer>(&DWaylandInterfaceHook::hideSplitMenu)}
     };
     return functionCache.value(function);
 }
@@ -247,6 +251,23 @@ bool DWaylandInterfaceHook::supportForSplittingWindowByType(quint32 wid, quint32
     DNoTitlebarWlWindowHelper::setWindowProperty(window, ::supportForSplittingWindow, false);
     int propertyValue = window->property(::supportForSplittingWindow).toInt();
     return propertyValue >= 0 && static_cast<quint32>(propertyValue) >= screenSplittingType;
+}
+
+bool DWaylandInterfaceHook::supportSplitMenu(WId wid)
+{
+    auto *window = fromQtWinId(wid);
+    return window && window->handle() && supportForSplittingWindow(wid)
+            && DClientManagement::instance()->isValid();
+}
+
+void DWaylandInterfaceHook::showSplitMenu(WId wid, const QRect &buttonRect)
+{
+    DClientManagement::instance()->showSplitMenu(wid, buttonRect);
+}
+
+void DWaylandInterfaceHook::hideSplitMenu(WId wid, bool delay)
+{
+    DClientManagement::instance()->hideSplitMenu(wid, delay);
 }
 
 DPP_END_NAMESPACE

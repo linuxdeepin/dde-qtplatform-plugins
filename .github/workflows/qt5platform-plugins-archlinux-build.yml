@@ -30,7 +30,7 @@ jobs:
             libxkbcommon libxkbcommon-x11 \
             libxi libxrender libsm libice cairo \
             dbus libglvnd fontconfig glib2 mtdev systemd \
-            kwayland5 \
+            kwayland5 deepin-wayland-protocols \
             dtkcommon
 
       - uses: actions/checkout@v4
