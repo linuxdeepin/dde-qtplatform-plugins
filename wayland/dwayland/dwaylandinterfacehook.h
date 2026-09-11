@@ -14,6 +14,7 @@ QT_BEGIN_NAMESPACE
 class QObject;
 class QWindow;
 class QPointF;
+class QRect;
 class QVariant;
 class QPlatformNativeInterface;
 QT_END_NAMESPACE
@@ -55,6 +56,9 @@ public:
     static void splitWindowOnScreenByType(WId wid, quint32 position, quint32 type);
     static bool supportForSplittingWindow(WId wid);
     static bool supportForSplittingWindowByType(quint32 wid, quint32 screenSplittingType);
+    static bool supportSplitMenu(WId wid);
+    static void showSplitMenu(WId wid, const QRect &buttonRect);
+    static void hideSplitMenu(WId wid, bool delay);
 };
 
 DPP_END_NAMESPACE

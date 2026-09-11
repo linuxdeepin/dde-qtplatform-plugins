@@ -13,6 +13,7 @@
 #include <QPainter>
 #include <QCursor>
 #include <QDebug>
+#include <QLoggingCategory>
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #include <private/qtx11extras_p.h>
 #else
@@ -47,6 +48,12 @@ extern Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal 
 QT_END_NAMESPACE
 
 DPP_BEGIN_NAMESPACE
+
+#ifndef QT_DEBUG
+Q_LOGGING_CATEGORY(lcDxcbSplitMenu, "dtk.qpa.dxcb.splitmenu", QtInfoMsg)
+#else
+Q_LOGGING_CATEGORY(lcDxcbSplitMenu, "dtk.qpa.dxcb.splitmenu")
+#endif
 
 QImage Utility::dropShadow(const QPixmap &px, qreal radius, const QColor &color)
 {
@@ -500,10 +507,70 @@ bool Utility::supportForSplittingWindowByType(quint32 WId, quint32 screenSplitti
     auto propAtom = internAtom("_DEEPIN_NET_SUPPORTED");
     QByteArray data = windowProperty(WId, propAtom, XCB_ATOM_CARDINAL, 4);
 
-    if (const char *cdata = data.constData())
-        return *(reinterpret_cast<const quint8 *>(cdata)) >= screenSplittingType;
+    if (!data.isEmpty())
+        return static_cast<quint8>(data.at(0)) >= screenSplittingType;
 
     return false;
+}
+
+bool Utility::supportSplitMenu(WId wid)
+{
+    const bool hasToggleAtom = internAtom("_WM_TOGGLE_SPLIT_MENU", true) != XCB_ATOM_NONE;
+    const bool splitable = wid && supportForSplittingWindow(wid);
+    const bool supported = hasToggleAtom && splitable && DXcbWMSupport::instance()->hasComposite();
+    qCDebug(lcDxcbSplitMenu) << "SplitMenu support check, wid:" << wid
+                            << "toggle atom:" << hasToggleAtom
+                            << "splitable:" << splitable
+                            << "supported:" << supported;
+    return supported;
+}
+
+void Utility::showSplitMenu(WId wid, const QRect &buttonRect)
+{
+    if (!wid || !buttonRect.isValid()) {
+        qCDebug(lcDxcbSplitMenu) << "Ignore invalid SplitMenu show request, wid:" << wid
+                                << "button rect:" << buttonRect;
+        return;
+    }
+
+    xcb_client_message_event_t event{};
+    event.response_type = XCB_CLIENT_MESSAGE;
+    event.type = internAtom("_WM_TOGGLE_SPLIT_MENU", false);
+    event.window = wid;
+    event.format = 32;
+    event.data.data32[0] = 1;
+    event.data.data32[1] = buttonRect.x();
+    event.data.data32[2] = buttonRect.y();
+    event.data.data32[3] = buttonRect.width();
+    event.data.data32[4] = buttonRect.height();
+
+    xcb_send_event(QX11Info::connection(), false, QX11Info::appRootWindow(QX11Info::appScreen()),
+                   SubstructureNotifyMask, reinterpret_cast<const char *>(&event));
+    xcb_flush(QX11Info::connection());
+    qCDebug(lcDxcbSplitMenu) << "Sent SplitMenu show request, wid:" << wid
+                            << "button rect:" << buttonRect;
+}
+
+void Utility::hideSplitMenu(WId wid, bool delay)
+{
+    if (!wid) {
+        qCDebug(lcDxcbSplitMenu) << "Ignore SplitMenu hide request without a window";
+        return;
+    }
+
+    xcb_client_message_event_t event{};
+    event.response_type = XCB_CLIENT_MESSAGE;
+    event.type = internAtom("_WM_TOGGLE_SPLIT_MENU", false);
+    event.window = wid;
+    event.format = 32;
+    event.data.data32[0] = 0;
+    event.data.data32[1] = delay;
+
+    xcb_send_event(QX11Info::connection(), false, QX11Info::appRootWindow(QX11Info::appScreen()),
+                   SubstructureNotifyMask, reinterpret_cast<const char *>(&event));
+    xcb_flush(QX11Info::connection());
+    qCDebug(lcDxcbSplitMenu) << "Sent SplitMenu hide request, wid:" << wid
+                            << "delay:" << delay;
 }
 
 bool Utility::setEnableBlurWindow(const quint32 WId, bool enable)

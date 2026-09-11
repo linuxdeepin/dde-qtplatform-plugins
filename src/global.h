@@ -107,6 +107,9 @@ DEFINE_CONST_CHAR(supportForSplittingWindow);
 DEFINE_CONST_CHAR(sendEndStartupNotifition);
 DEFINE_CONST_CHAR(splitWindowOnScreenByType);
 DEFINE_CONST_CHAR(supportForSplittingWindowByType);
+DEFINE_CONST_CHAR(supportSplitMenu);
+DEFINE_CONST_CHAR(showSplitMenu);
+DEFINE_CONST_CHAR(hideSplitMenu);
 
 // others
 DEFINE_CONST_CHAR(WmWindowTypes);

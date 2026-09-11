@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+# SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 #
 # SPDX-License-Identifier: LGPL-3.0-or-later
 
@@ -12,10 +12,19 @@ endif()
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(WAYLAND REQUIRED wayland-client wayland-cursor IMPORTED_TARGET)
 pkg_check_modules(X11 REQUIRED xkbcommon IMPORTED_TARGET)
+find_package(ECM REQUIRED)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_MODULE_PATH})
+find_package(WaylandScanner REQUIRED)
+find_package(DeepinWaylandProtocols REQUIRED CONFIG)
 
 add_definitions(-DQT5DWAYLANDPLUGIN_LIBRARY -DQT_DEPRECATED_WARNINGS)
 
 include(${CMAKE_CURRENT_LIST_DIR}/dwayland.cmake)
+
+ecm_add_wayland_client_protocol(wayland_SRC
+    PROTOCOL ${DEEPIN_WAYLAND_PROTOCOLS_DIR}/client-management.xml
+    BASENAME deepin-client-management
+)
 
 add_library(${PROJECT_NAME} MODULE main.cpp ${wayland_SRC})
 

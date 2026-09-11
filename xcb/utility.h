@@ -75,6 +75,9 @@ public:
     static void splitWindowOnScreenByType(quint32 WId, quint32 position, quint32 type);
     static bool supportForSplittingWindow(quint32 WId);
     static bool supportForSplittingWindowByType(quint32 WId, quint32 screenSplittingType);
+    static bool supportSplitMenu(WId wid);
+    static void showSplitMenu(WId wid, const QRect &buttonRect);
+    static void hideSplitMenu(WId wid, bool delay);
 
     struct BlurArea {
         qint32 x;
