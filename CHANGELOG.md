@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.7.50] - 2026-09-22
+
+### Added
+
+- Add split menu support for wayland and xcb
+
+### Changed
+
+- Specify bash shell for deepin build step
+
 ## [6.7.49] - 2026-09-10
 
 ## [6.7.48] - 2026-08-18
