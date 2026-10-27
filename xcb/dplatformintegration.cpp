@@ -269,6 +269,8 @@ bool DPlatformIntegration::buildNativeSettings(QObject *object, quint32 settingW
     DXcbXSettings *settings = nullptr;
     bool global_settings = false;
     if (settingWindow || !settings_property.isEmpty()) {
+        if (!DPlatformIntegration::xcbConnection())
+            return false;
         settings = new DXcbXSettings(DPlatformIntegration::xcbConnection()->xcb_connection(), settingWindow, settings_property);
     } else {
         global_settings = true;
@@ -1350,6 +1352,9 @@ void DPlatformIntegration::sendEndStartupNotifition()
 
     if (startupid.isEmpty())
         return ;
+
+    if (!xcbConnection())
+        return;
 
     message =  QByteArrayLiteral("remove: ID=") + startupid;
     xcb_client_message_event_t ev;
