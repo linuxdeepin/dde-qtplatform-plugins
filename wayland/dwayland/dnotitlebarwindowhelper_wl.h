@@ -29,7 +29,7 @@ public:
     static void requestByWindowProperty(QWindow *window, const char *name);
     static void popupSystemWindowMenu(quintptr wid);
 
-private slots:
+private Q_SLOTS:
     // update properties
     Q_SLOT void updateEnableSystemMoveFromProperty();
 

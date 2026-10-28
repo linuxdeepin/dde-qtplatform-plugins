@@ -56,7 +56,7 @@ public Q_SLOTS:
     void onOptAction(int type);
     void onFocusWindowChanged();
 
-signals:
+Q_SIGNALS:
     void anchorPositionChanged();
     void cursorPositionChanged();
     void anchorRectangleChanged();

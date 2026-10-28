@@ -35,10 +35,10 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 #endif
 
-private slots:
+private Q_SLOTS:
     void onFontChanged();
 
-signals:
+Q_SIGNALS:
     void optAction(OptionType type);
 
 private:
