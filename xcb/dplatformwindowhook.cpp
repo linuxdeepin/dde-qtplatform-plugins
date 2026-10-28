@@ -63,7 +63,7 @@ void DPlatformWindowHook::setGeometry(const QRect &rect)
 {
     const QMargins &margins = me()->windowMargins;
 
-    emit me()->windowGeometryAboutChanged(rect);
+    Q_EMIT me()->windowGeometryAboutChanged(rect);
     CALL::setGeometry(rect + margins);
 }
 

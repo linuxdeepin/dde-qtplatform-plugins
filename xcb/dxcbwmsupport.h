@@ -105,7 +105,7 @@ public:
     QVector<xcb_window_t> allWindow() const;
     xcb_window_t windowFromPoint(const QPoint &p) const;
 
-signals:
+Q_SIGNALS:
     void windowManagerChanged();
     void hasBlurWindowChanged(bool hasBlurWindow);
     void hasCompositeChanged(bool hasComposite);

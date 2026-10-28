@@ -58,7 +58,7 @@ public:
 
     static DPlatformWindowHook *getHookByWindow(const QPlatformWindow *window);
 
-signals:
+Q_SIGNALS:
     void windowGeometryAboutChanged(const QRect &rect);
 
 private:
