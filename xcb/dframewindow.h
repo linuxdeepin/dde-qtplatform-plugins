@@ -69,7 +69,7 @@ public:
 
     bool redirectContent() const;
 
-signals:
+Q_SIGNALS:
     void contentMarginsHintChanged(const QMargins &oldMargins) const;
 
 protected:

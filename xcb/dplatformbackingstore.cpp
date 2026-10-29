@@ -96,7 +96,7 @@ public:
         }
     }
 
-public slots:
+public Q_SLOTS:
     void updateWindowBlurAreasForWM()
     {
         m_store->updateWindowBlurAreasForWM();
