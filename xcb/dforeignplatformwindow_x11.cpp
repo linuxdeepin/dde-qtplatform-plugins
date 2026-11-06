@@ -273,7 +273,7 @@ void DForeignPlatformWindow::updateTitle()
         if (title != qt_window_private(window())->windowTitle) {
             qt_window_private(window())->windowTitle = title;
 
-            emit window()->windowTitleChanged(title);
+            Q_EMIT window()->windowTitleChanged(title);
         }
     }
 
@@ -332,7 +332,7 @@ void DForeignPlatformWindow::updateWindowState()
 
     m_windowState = newState;
     qt_window_private(window())->windowState = newState;
-    emit window()->windowStateChanged(newState);
+    Q_EMIT window()->windowStateChanged(newState);
     qt_window_private(window())->updateVisibility();
 }
 

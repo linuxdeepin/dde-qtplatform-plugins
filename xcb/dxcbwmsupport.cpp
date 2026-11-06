@@ -30,7 +30,7 @@ DXcbWMSupport::DXcbWMSupport()
             if (frame->m_contentWindow && frame->m_contentWindow->handle()
                     && static_cast<QXcbWindow*>(frame->m_contentWindow->handle())->QXcbWindow::winId() == winId) {
                 if (frame->handle())
-                    emit windowMotifWMHintsChanged(frame->handle()->winId());
+                    Q_EMIT windowMotifWMHintsChanged(frame->handle()->winId());
                 break;
             }
         }
@@ -85,7 +85,7 @@ void DXcbWMSupport::updateWMName(bool emitSignal)
     updateRootWindowProperties();
 
     if (emitSignal)
-        emit windowManagerChanged();
+        Q_EMIT windowManagerChanged();
 }
 
 void DXcbWMSupport::updateNetWMAtoms()
@@ -162,7 +162,7 @@ void DXcbWMSupport::updateHasBlurWindow()
 
     m_hasBlurWindow = hasBlurWindow;
 
-    emit hasBlurWindowChanged(hasBlurWindow);
+    Q_EMIT hasBlurWindowChanged(hasBlurWindow);
 }
 
 void DXcbWMSupport::updateHasComposite()
@@ -213,7 +213,7 @@ void DXcbWMSupport::updateHasComposite()
 
     m_hasComposite = hasComposite;
 
-    emit hasCompositeChanged(hasComposite);
+    Q_EMIT hasCompositeChanged(hasComposite);
 }
 
 void DXcbWMSupport::updateHasNoTitlebar()
@@ -225,7 +225,7 @@ void DXcbWMSupport::updateHasNoTitlebar()
 
     m_hasNoTitlebar = hasNoTitlebar;
 
-    emit hasNoTitlebarChanged(m_hasNoTitlebar);
+    Q_EMIT hasNoTitlebarChanged(m_hasNoTitlebar);
 }
 
 void DXcbWMSupport::updateHasScissorWindow()
@@ -237,7 +237,7 @@ void DXcbWMSupport::updateHasScissorWindow()
 
     m_hasScissorWindow = hasScissorWindow;
 
-    emit hasScissorWindowChanged(m_hasScissorWindow);
+    Q_EMIT hasScissorWindowChanged(m_hasScissorWindow);
 }
 
 void DXcbWMSupport::updateWallpaperEffect()
@@ -249,7 +249,7 @@ void DXcbWMSupport::updateWallpaperEffect()
 
     m_hasWallpaperEffect = hasWallpaperEffect;
 
-    emit hasWallpaperEffectChanged(hasWallpaperEffect);
+    Q_EMIT hasWallpaperEffectChanged(hasWallpaperEffect);
 }
 
 qint8 DXcbWMSupport::getHasWindowAlpha() const
