@@ -36,7 +36,7 @@ protected:
 private:
     static InputDeviceType eventType(QEvent *type);
 
-signals:
+Q_SIGNALS:
     void lastInputDeviceTypeChanged();
 
 private:

@@ -132,7 +132,7 @@ bool XcbNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *
             DXcbXSettings::handlePropertyNotifyEvent(pn);
 
             if (pn->atom == DPlatformIntegration::xcbConnection()->atom(QXcbAtom::D_QXCBATOM_WRAPPER(_MOTIF_WM_HINTS))) {
-                emit DXcbWMSupport::instance()->windowMotifWMHintsChanged(pn->window);
+                Q_EMIT DXcbWMSupport::instance()->windowMotifWMHintsChanged(pn->window);
             } else if (pn->atom == DXcbWMSupport::instance()->_deepin_wallpaper_shared_key) {
                     DXcbWMSupport::instance()->wallpaperSharedChanged();
             } else {
@@ -147,7 +147,7 @@ bool XcbNativeEventFilter::nativeEventFilter(const QByteArray &eventType, void *
                 } else if (pn->atom == DXcbWMSupport::instance()->_kde_net_wm_blur_rehind_region_atom) {
                     DXcbWMSupport::instance()->updateRootWindowProperties();
                 } else if (pn->atom == Utility::internAtom("_NET_CLIENT_LIST_STACKING")) {
-                    emit DXcbWMSupport::instance()->windowListChanged();
+                    Q_EMIT DXcbWMSupport::instance()->windowListChanged();
                 } else if (pn->atom == Utility::internAtom("_NET_KDE_COMPOSITE_TOGGLING")) {
                     DXcbWMSupport::instance()->updateWMName();
                 }

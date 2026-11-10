@@ -37,6 +37,8 @@ else()
 endif()
 
 add_library(${PROJECT_NAME} MODULE main.cpp ${GLOBAL_SOURCES} ${GLOBAL_HEADERS})
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE QT_NO_KEYWORDS)
 set_target_properties(${PROJECT_NAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins/wayland-shell-integration
 )
