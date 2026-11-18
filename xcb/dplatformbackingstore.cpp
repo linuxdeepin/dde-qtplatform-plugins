@@ -96,7 +96,7 @@ public:
         }
     }
 
-public slots:
+public Q_SLOTS:
     void updateWindowBlurAreasForWM()
     {
         m_store->updateWindowBlurAreasForWM();
@@ -661,7 +661,7 @@ static QRegion deviceRegion(const QRegion &region, QWindow *window, const QPoint
     QVector<QRect> rects;
     const QVector<QRect> regionRects = region.rects();
     rects.reserve(regionRects.count());
-    foreach (const QRect &rect, regionRects)
+    Q_FOREACH (const QRect &rect, regionRects)
         rects.append(deviceRect(rect.translated(offset), window));
 
     QRegion deviceRegion;
@@ -1570,7 +1570,7 @@ bool DPlatformBackingStore::updateWindowBlurAreasForWM()
     } else {
         newAreas.reserve(m_blurAreaList.size());
 
-        foreach (Utility::BlurArea area, m_blurAreaList) {
+        Q_FOREACH (Utility::BlurArea area, m_blurAreaList) {
             area *= device_pixel_ratio;
 
             if (area.x < 0) {
@@ -1599,7 +1599,7 @@ bool DPlatformBackingStore::updateWindowBlurAreasForWM()
 
         newPathList.reserve(m_blurPathList.size());
 
-        foreach (QPainterPath path, m_blurPathList) {
+        Q_FOREACH (QPainterPath path, m_blurPathList) {
             path *= device_pixel_ratio;
 
             if (m_windowClipPath.isEmpty())
@@ -1608,7 +1608,7 @@ bool DPlatformBackingStore::updateWindowBlurAreasForWM()
                 newPathList << path.translated(windowValidRect.topLeft()).intersected(m_windowClipPath).translated(offset);
         }
 
-        foreach (const Utility::BlurArea &area, newAreas) {
+        Q_FOREACH (const Utility::BlurArea &area, newAreas) {
             QPainterPath path;
 
             path.addRoundedRect(area.x, area.y, area.width, area.height, area.xRadius, area.yRaduis);

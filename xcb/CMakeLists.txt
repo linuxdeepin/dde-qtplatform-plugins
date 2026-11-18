@@ -27,6 +27,11 @@ include(${CMAKE_SOURCE_DIR}/src/src.cmake)
 
 add_library(${PROJECT_NAME} SHARED ${GLOBAL_HEADERS} ${GLOBAL_SOURCES} ${xcb_SRC} ${DBUS_INTERFACE_XMLS})
 
+# Protect vendored header that uses bare Qt keywords
+set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/dplatformnativeinterfacehook.cpp PROPERTIES COMPILE_FLAGS -UQT_NO_KEYWORDS)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE QT_NO_KEYWORDS)
+
 include(${CMAKE_CURRENT_LIST_DIR}/linux.cmake)
 
 set(EnableCov CACHE BOOL FALSE)

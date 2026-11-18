@@ -71,7 +71,7 @@ public:
 
     static DNoTitlebarWindowHelper *windowHelper(const QWindow *window);
 
-signals:
+Q_SIGNALS:
     void themeChanged();
     void windowRadiusChanged();
     void borderWidthChanged();
@@ -83,7 +83,7 @@ signals:
     void windowStartUpEffectChanged();
     void mouseInputAreaMarginsChanged();
 
-private slots:
+private Q_SLOTS:
     // update properties
     Q_SLOT void updateClipPathFromProperty();
     Q_SLOT void updateFrameMaskFromProperty();

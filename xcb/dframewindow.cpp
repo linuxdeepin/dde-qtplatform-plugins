@@ -997,7 +997,7 @@ void DFrameWindow::updateContentMarginsHint(bool force)
     updateShadow();
     updateMask();
 
-    emit contentMarginsHintChanged(old_margins);
+    Q_EMIT contentMarginsHintChanged(old_margins);
 }
 
 void DFrameWindow::updateMask()

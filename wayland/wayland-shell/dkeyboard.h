@@ -22,7 +22,7 @@ public:
     explicit DKeyboard(QObject *parent = nullptr);
     virtual ~DKeyboard();
 
-public slots:
+public Q_SLOTS:
     void handleKeyEvent(quint32 key, DDEKeyboard::KeyState state, quint32 time);
     void handleModifiersChanged(quint32 depressed, quint32 latched, quint32 locked, quint32 group);
 };

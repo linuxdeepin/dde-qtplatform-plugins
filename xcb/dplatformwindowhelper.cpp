@@ -950,7 +950,7 @@ bool DPlatformWindowHelper::updateWindowBlurAreasForWM()
 
         newAreas.reserve(m_blurAreaList.size());
 
-        foreach (Utility::BlurArea area, m_blurAreaList) {
+        Q_FOREACH (Utility::BlurArea area, m_blurAreaList) {
             area *= device_pixel_ratio;
 
             area.x += offset.x();
@@ -995,7 +995,7 @@ bool DPlatformWindowHelper::updateWindowBlurAreasForWM()
 
     newPathList.reserve(m_blurAreaList.size());
 
-    foreach (Utility::BlurArea area, m_blurAreaList) {
+    Q_FOREACH (Utility::BlurArea area, m_blurAreaList) {
         QPainterPath path;
 
         area *= device_pixel_ratio;
@@ -1010,7 +1010,7 @@ bool DPlatformWindowHelper::updateWindowBlurAreasForWM()
     if (!m_blurPathList.isEmpty()) {
         newPathList.reserve(newPathList.size() + m_blurPathList.size());
 
-        foreach (const QPainterPath &path, m_blurPathList) {
+        Q_FOREACH (const QPainterPath &path, m_blurPathList) {
             newPathList << (path * device_pixel_ratio).translated(offset).intersected(window_valid_path);
         }
     }

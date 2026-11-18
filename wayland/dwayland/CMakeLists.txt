@@ -28,6 +28,8 @@ ecm_add_wayland_client_protocol(wayland_SRC
 
 add_library(${PROJECT_NAME} MODULE main.cpp ${wayland_SRC})
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE QT_NO_KEYWORDS)
+
 target_compile_definitions(${PROJECT_NAME} 
 PRIVATE
     QT5DWAYLANDPLUGIN_LIBRARY

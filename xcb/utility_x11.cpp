@@ -309,7 +309,7 @@ void Utility::setShapePath(quint32 WId, const QPainterPath &path, bool onlyInput
 
     QVector<xcb_rectangle_t> rectangles;
 
-    foreach(const QPolygonF &polygon, path.toFillPolygons()) {
+    Q_FOREACH(const QPolygonF &polygon, path.toFillPolygons()) {
         QRegion region(polygon.toPolygon());
         for (auto area = region.cbegin(); area != region.cend(); ++area) {
             xcb_rectangle_t rectangle;
@@ -630,7 +630,7 @@ bool Utility::blurWindowBackground(const quint32 WId, const QVector<BlurArea> &a
 
         QVector<quint32> rects;
 
-        foreach (const BlurArea &area, areas) {
+        Q_FOREACH (const BlurArea &area, areas) {
             if (area.xRadius <= 0 || area.yRaduis <= 0) {
                 rects << area.x << area.y << area.width << area.height;
             } else {
@@ -638,7 +638,7 @@ bool Utility::blurWindowBackground(const quint32 WId, const QVector<BlurArea> &a
 
                 path.addRoundedRect(area.x, area.y, area.width, area.height, area.xRadius, area.yRaduis);
 
-                foreach(const QPolygonF &polygon, path.toFillPolygons()) {
+                Q_FOREACH(const QPolygonF &polygon, path.toFillPolygons()) {
                     QRegion region(polygon.toPolygon());
                     for(auto area = region.cbegin(); area != region.cend(); ++area) {
                         rects << area->x() << area->y() << area->width() << area->height();
@@ -692,8 +692,8 @@ bool Utility::blurWindowBackgroundByPaths(const quint32 WId, const QList<QPainte
 
         QVector<quint32> rects;
 
-        foreach (const QPainterPath &path, paths) {
-            foreach(const QPolygonF &polygon, path.toFillPolygons()) {
+        Q_FOREACH (const QPainterPath &path, paths) {
+            Q_FOREACH(const QPolygonF &polygon, path.toFillPolygons()) {
                 QRegion region(polygon.toPolygon());
                 for(auto area = region.cbegin(); area != region.cend(); ++area) {
                     rects << area->x() << area->y() << area->width() << area->height();
@@ -1032,7 +1032,7 @@ QVector<uint> Utility::getCurrentWorkspaceWindows()
 
     QVector<uint> windows;
 
-    foreach (quint32 WId, getWindows()) {
+    Q_FOREACH (quint32 WId, getWindows()) {
         qint32 ws = getWorkspaceForWindow(WId);
 
         if (ws < 0 || ws == current_workspace) {

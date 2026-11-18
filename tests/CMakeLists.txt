@@ -22,6 +22,8 @@ file(GLOB test_SRC test.h main.cpp src/*.cpp)
 
 add_executable(${PROJECT_NAME} ${test_SRC})
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE QT_NO_KEYWORDS)
+
 include(${CMAKE_SOURCE_DIR}/xcb/linux.cmake)
 
 add_definitions(-DPLUGIN_OUTPUT_PATH=\"${LIBRARY_OUTPUT_PATH}/..\")
